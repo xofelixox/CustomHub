@@ -44,7 +44,7 @@ const defaultThemes = [
     { 
         name: "Asuka", 
         bg: "#3d0b0b", panel: "#e63946", text: "#ffffff", grey: "#f1faee", accent: "#ffb703", 
-        sprite: "https://static.wikia.nocookie.net/all-worlds-alliance/images/2/24/9abc7cf4bd20d565c5f7da6df73a9bdf.png/revision/latest?cb=20190106111029"
+        sprite: "https://www.citypng.com/public/uploads/preview/hd-asuka-langley-neon-genesis-evangelion-png-735811696437361lotj64nefl.png"
     }
 ];
 
@@ -260,3 +260,4 @@ document.getElementById('choose-btn').addEventListener('click', () => {
 renderThemeNav();
 
 applyTheme(currentIdx);
+
