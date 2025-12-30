@@ -44,7 +44,7 @@ const defaultThemes = [
     { 
         name: "Asuka", 
         bg: "#3d0b0b", panel: "#e63946", text: "#ffffff", grey: "#f1faee", accent: "#ffb703", 
-        sprite: "https://www.citypng.com/public/uploads/preview/hd-asuka-langley-neon-genesis-evangelion-png-735811696437361lotj64nefl.png"
+        sprite: "https://wallpapers.com/images/hd/asuka-langley-smiling-evangelion-wwgz2g6wer42sp4h-2.jpg"
     }
 ];
 
@@ -260,4 +260,5 @@ document.getElementById('choose-btn').addEventListener('click', () => {
 renderThemeNav();
 
 applyTheme(currentIdx);
+
 
