@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retro Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+</head>
+<body>
+
+    <div class="toggle-zone">
+        <button class="mini-btn" id="theme-toggle">THEME</button>
+        <button class="mini-btn" id="manage-btn">MANAGE</button>
+    </div>
+
+    <div id="editor-overlay" class="hidden">
+        <div class="panel editor-panel">
+            <div class="panel-header">Theme Manager</div>
+            <div id="theme-list"></div>
+            <hr style="border: 2px solid var(--text); margin: 15px 0;">
+            <div class="panel-header">Create New</div>
+            <div class="editor-grid">
+                <label>NAME: <input type="text" id="new-theme-name" placeholder="Vaporeon?"></label>
+                <label>SPRITE URL: <input type="text" id="new-theme-sprite" placeholder="Paste image link..."></label>
+                <div class="color-pickers">
+                    <label>BG: <input type="color" id="color-bg" value="#fff5f5"></label>
+                    <label>PANEL: <input type="color" id="color-panel" value="#fa8caa"></label>
+                    <label>TEXT: <input type="color" id="color-text" value="#000000"></label>
+                    <label>2ND: <input type="color" id="color-grey" value="#d85a7a"></label>
+                    <label>ACC: <input type="color" id="color-accent" value="#95daf8"></label>
+                </div>
+            </div>
+            <div class="pool-controls" style="margin-top:20px;">
+                <button class="mini-btn" id="save-theme">SAVE</button>
+                <button class="mini-btn" id="close-editor">CLOSE</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="pixel-pet-container">
+        <div id="pet-speech">Hello!</div>
+        <img id="pet-sprite" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/700.png" alt="Pet">
+    </div>
+
+    <main class="dashboard">
+        <section class="panel clock-panel">
+            <div class="panel-header">System Time</div>
+            <div id="clock">00:00:00</div>
+        </section>
+
+        <section class="panel full-width">
+            <form action="https://www.google.com/search" method="GET" class="search-container">
+                <input type="text" name="q" id="search-input" placeholder="Search the tall grass..." autocomplete="off">
+                <button type="submit" class="nes-btn search-btn">GO</button>
+            </form>
+        </section>
+
+        <section class="panel">
+            <div class="panel-header">Fast Travel</div>
+            <div class="links-grid">
+                <a href="https://youtube.com" target="_blank" class="nes-btn">YOUTUBE</a>
+                <a href="https://gmail.com" target="_blank" class="nes-btn">GMAIL</a>
+                <a href="https://twitch.tv" target="_blank" class="nes-btn">TWITCH</a>
+                <a href="https://chat.openai.com" target="_blank" class="nes-btn">CHATGPT</a>
+            </div>
+        </section>
+
+        <section class="panel">
+            <div class="panel-header">Decision Pool</div>
+            <div class="pool-input-group">
+                <input type="text" id="pool-input" placeholder="Add option..." autocomplete="off">
+                <button class="mini-btn" id="add-to-pool">ADD</button>
+            </div>
+            <div id="pool-display">No items in pool</div>
+            <div class="pool-controls">
+                <button class="nes-btn" id="choose-btn">CHOOSE FOR ME</button>
+                <button class="mini-btn" id="clear-pool">CLEAR</button>
+            </div>
+            <div id="decision-result">???</div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
