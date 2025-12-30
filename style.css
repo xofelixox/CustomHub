@@ -103,3 +103,44 @@ body {
 
 .mini-btn { background: var(--grey); color: var(--bg); padding: 10px; font-size: 12px; }
 .toggle-zone { position: fixed; top: 25px; right: 25px; display: flex; gap: 10px; }
+
+/* Modified Toggle Zone to hold multiple buttons */
+.toggle-zone {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column; /* Stack vertically or use 'row' for horizontal */
+    align-items: flex-end;
+    gap: 10px;
+    z-index: 500;
+}
+
+#theme-nav {
+    display: flex;
+    flex-direction: column; /* Change to 'row' if you prefer them side-by-side */
+    gap: 5px;
+}
+
+.nav-tab {
+    padding: 8px 12px;
+    font-size: 10px;
+    cursor: pointer;
+    background: var(--panel);
+    color: var(--text);
+    border: 3px solid var(--text);
+    transition: all 0.1s steps(2);
+    text-transform: uppercase;
+}
+
+.nav-tab:hover {
+    transform: translateX(-5px);
+    background: var(--accent);
+}
+
+.nav-tab.active {
+    background: var(--accent);
+    border-color: var(--text);
+    box-shadow: -4px 4px 0px var(--text);
+    transform: translateX(-10px);
+}

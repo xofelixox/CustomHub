@@ -9,152 +9,217 @@ function updateClock() {
 setInterval(updateClock, 1000);
 updateClock();
 
-// 2. Theme Data & Persistence
+// 2. Theme Data & Profiles
 const defaultThemes = [
     { 
         name: "Sylveon", 
-        bg: "#fff5f5", 
-        panel: "#fa8caa", 
-        text: "#000000", 
-        grey: "#d85a7a", 
-        accent: "#95daf8", 
-        sprite: "https://play.pokemonshowdown.com/sprites/gen5ani/sylveon.gif",
-        msgs: ["Sylveon!", "Ribbon Dance!", "Fairy Wind!", "Love you!", "Sparkle!"] 
+        bg: "#fff5f5", panel: "#fa8caa", text: "#000000", grey: "#d85a7a", accent: "#95daf8", 
+        sprite: "https://play.pokemonshowdown.com/sprites/gen5ani/sylveon.gif"
     },
     { 
         name: "Leafeon", 
-        bg: "#eed59c", 
-        panel: "#89d89b", 
-        text: "#000000", 
-        grey: "#319c73", 
-        accent: "#bd9462", 
-        sprite: "https://img.pokemondb.net/sprites/black-white/anim/normal/leafeon.gif",
-        msgs: ["Leafeon!", "Leaf Blade!", "Synthesis...", "Fresh Air!", "Photosynthesis!"] 
+        bg: "#eed59c", panel: "#89d89b", text: "#000000", grey: "#319c73", accent: "#bd9462", 
+        sprite: "https://img.pokemondb.net/sprites/black-white/anim/normal/leafeon.gif"
+    },
+    { 
+        name: "Arcanine", 
+        bg: "#fdf2e9", panel: "#f08030", text: "#000000", grey: "#c06828", accent: "#f8d030", 
+        sprite: "https://img.pokemondb.net/sprites/black-white/anim/normal/arcanine.gif"
+    },
+    { 
+        name: "Mew", 
+        bg: "#fef2f9", panel: "#ffb7da", text: "#000000", grey: "#f096c4", accent: "#b1e5f2", 
+        sprite: "https://img.pokemondb.net/sprites/black-white/anim/normal/mew.gif"
+    },
+    { 
+        name: "Mimikyu", 
+        bg: "#f4f1d6", panel: "#dccf91", text: "#000000", grey: "#a69a68", accent: "#ef4036", 
+        sprite: "https://play.pokemonshowdown.com/sprites/gen5ani/mimikyu.gif"
+    },
+    { 
+        name: "Reshiram", 
+        bg: "#f0f4f7", panel: "#ffffff", text: "#2c3e50", grey: "#bdc3c7", accent: "#3498db", 
+        sprite: "https://img.pokemondb.net/sprites/black-white/anim/normal/reshiram.gif"
+    },
+    { 
+        name: "Asuka", 
+        bg: "#3d0b0b", panel: "#e63946", text: "#ffffff", grey: "#f1faee", accent: "#ffb703", 
+        sprite: "https://raw.githubusercontent.com/msikma/pokesprite/master/misc/ribbon/asuka.png"
     }
 ];
 
-// Load themes from LocalStorage or use defaults
 let userThemes = JSON.parse(localStorage.getItem('user_themes')) || defaultThemes;
 let currentIdx = parseInt(localStorage.getItem('last_theme_index')) || 0;
+let editingIdx = null; 
+
+// NEW: Function to render the profile buttons in the top-right
+function renderThemeNav() {
+    const nav = document.getElementById('theme-nav');
+    if (!nav) return;
+    nav.innerHTML = userThemes.map((t, i) => `
+        <button class="nav-tab ${i === currentIdx ? 'active' : ''}" onclick="applyTheme(${i})">
+            ${t.name.toUpperCase()}
+        </button>
+    `).join('');
+}
 
 function applyTheme(idx) {
     if (!userThemes[idx]) idx = 0;
+    currentIdx = idx;
     const t = userThemes[idx];
-    const r = document.documentElement;
-    
-    // Update CSS Variables
-    r.style.setProperty('--bg', t.bg);
-    r.style.setProperty('--panel', t.panel);
-    r.style.setProperty('--text', t.text);
-    r.style.setProperty('--grey', t.grey);
-    r.style.setProperty('--accent', t.accent);
-    
-    // Update Sprite and Button Text
-    document.getElementById('pet-sprite').src = t.sprite;
-    document.getElementById('theme-toggle').innerText = t.name.toUpperCase();
-    
-    // Save last used theme
+    updateVisuals(t);
     localStorage.setItem('last_theme_index', idx);
+    renderThemeNav(); // Refresh tabs to show which one is active
 }
 
-// 3. Theme Manager (Editor) Logic
-const overlay = document.getElementById('editor-overlay');
-const manageBtn = document.getElementById('manage-btn');
-const closeBtn = document.getElementById('close-editor');
-const saveBtn = document.getElementById('save-theme');
+function updateVisuals(config) {
+    const r = document.documentElement;
+    r.style.setProperty('--bg', config.bg);
+    r.style.setProperty('--panel', config.panel);
+    r.style.setProperty('--text', config.text);
+    r.style.setProperty('--grey', config.grey);
+    r.style.setProperty('--accent', config.accent);
+    document.getElementById('pet-sprite').src = config.sprite;
+}
 
-manageBtn.addEventListener('click', () => {
+// 3. Theme Manager Logic
+const overlay = document.getElementById('editor-overlay');
+
+function getEditorValues() {
+    const rawName = document.getElementById('new-theme-name').value.trim() || "Preview";
+    const spriteInput = document.getElementById('new-theme-sprite').value.trim();
+    return {
+        name: rawName,
+        bg: document.getElementById('color-bg').value,
+        panel: document.getElementById('color-panel').value,
+        text: document.getElementById('color-text').value,
+        grey: document.getElementById('color-grey').value,
+        accent: document.getElementById('color-accent').value,
+        sprite: spriteInput || `https://img.pokemondb.net/sprites/black-white/anim/normal/${rawName.toLowerCase()}.gif`
+    };
+}
+
+// Live Preview
+document.querySelectorAll('.editor-grid input').forEach(input => {
+    input.addEventListener('input', () => {
+        const preview = getEditorValues();
+        updateVisuals(preview);
+    });
+});
+
+document.getElementById('manage-btn').addEventListener('click', () => {
     overlay.classList.remove('hidden');
+    editingIdx = null;
+    resetEditorFields();
     renderList();
 });
 
-closeBtn.addEventListener('click', () => overlay.classList.add('hidden'));
+document.getElementById('close-editor').addEventListener('click', () => {
+    overlay.classList.add('hidden');
+    applyTheme(currentIdx); 
+});
+
+document.getElementById('factory-reset').addEventListener('click', () => {
+    if(confirm("This will delete all custom themes and reset to the original 7. Proceed?")) {
+        localStorage.clear();
+        location.reload();
+    }
+});
 
 function renderList() {
     const list = document.getElementById('theme-list');
     list.innerHTML = userThemes.map((t, i) => `
         <div class="theme-item">
-            <span>${t.name}</span>
-            <button class="delete-btn" onclick="deleteTheme(${i})">DELETE</button>
+            <span style="font-size:10px;">${t.name}</span>
+            <div style="display:flex; gap:5px;">
+                <button class="mini-btn" style="padding:2px 5px; font-size:8px; background:var(--accent); color:var(--text);" onclick="startEdit(${i})">EDIT</button>
+                <button class="mini-btn" style="padding:2px 5px; font-size:8px; background:#ffd700; color:#000;" onclick="cloneTheme(${i})">CLONE</button>
+                <button class="delete-btn" onclick="deleteTheme(${i})">X</button>
+            </div>
         </div>
     `).join('');
 }
 
+window.startEdit = (i) => {
+    editingIdx = i;
+    const t = userThemes[i];
+    fillEditor(t);
+    updateVisuals(t);
+};
+
+window.cloneTheme = (i) => {
+    const cloned = JSON.parse(JSON.stringify(userThemes[i]));
+    cloned.name += " (Copy)";
+    userThemes.push(cloned);
+    saveAndRefresh();
+    startEdit(userThemes.length - 1);
+};
+
+function fillEditor(t) {
+    document.getElementById('new-theme-name').value = t.name;
+    document.getElementById('new-theme-sprite').value = t.sprite;
+    document.getElementById('color-bg').value = t.bg;
+    document.getElementById('color-panel').value = t.panel;
+    document.getElementById('color-text').value = t.text;
+    document.getElementById('color-grey').value = t.grey;
+    document.getElementById('color-accent').value = t.accent;
+}
+
+function resetEditorFields() {
+    document.getElementById('new-theme-name').value = "";
+    document.getElementById('new-theme-sprite').value = "";
+}
+
 window.deleteTheme = (i) => {
-    if (userThemes.length <= 1) {
-        alert("You must keep at least one theme!");
-        return;
-    }
+    if (userThemes.length <= 1) return alert("Keep at least one!");
     userThemes.splice(i, 1);
     currentIdx = 0;
     saveAndRefresh();
     applyTheme(0);
 };
 
-saveBtn.addEventListener('click', () => {
-    const rawName = document.getElementById('new-theme-name').value.trim() || "Custom";
-    const nameInput = rawName.toLowerCase();
-    const spriteInput = document.getElementById('new-theme-sprite').value.trim();
-    
-    // AUTO-SPRITE LOGIC: If sprite URL is empty, fetch from PokeDB
-    let finalSprite = spriteInput;
-    if (!finalSprite) {
-        // Using animated gen 5 sprites for a nice look
-        finalSprite = `https://img.pokemondb.net/sprites/black-white/anim/normal/${nameInput}.gif`;
-    }
-
-    const newTheme = {
-        name: rawName,
-        sprite: finalSprite,
-        bg: document.getElementById('color-bg').value,
-        panel: document.getElementById('color-panel').value,
-        text: document.getElementById('color-text').value,
-        grey: document.getElementById('color-grey').value,
-        accent: document.getElementById('color-accent').value,
-        msgs: [`I am ${rawName}!`, "New Friend!", "Happy!", "Ready to go!"]
-    };
-
-    // Verify if sprite exists before saving
-    const imgTest = new Image();
-    imgTest.src = finalSprite;
-    imgTest.onload = () => {
-        userThemes.push(newTheme);
-        saveAndRefresh();
-        overlay.classList.add('hidden');
+document.getElementById('save-theme').addEventListener('click', () => {
+    const themeData = getEditorValues();
+    if (editingIdx !== null) {
+        userThemes[editingIdx] = themeData;
+    } else {
+        userThemes.push(themeData);
         currentIdx = userThemes.length - 1;
-        applyTheme(currentIdx);
-    };
-    imgTest.onerror = () => {
-        alert("Could not find that Pokémon sprite automatically. Please try a different name or paste a direct image URL!");
-    };
+    }
+    saveAndRefresh();
+    overlay.classList.add('hidden');
+    applyTheme(currentIdx);
 });
 
 function saveAndRefresh() {
     localStorage.setItem('user_themes', JSON.stringify(userThemes));
     renderList();
+    renderThemeNav(); // Keep the profile list updated
 }
 
-// Cycle themes on main button click
-document.getElementById('theme-toggle').addEventListener('click', () => {
-    currentIdx = (currentIdx + 1) % userThemes.length;
-    applyTheme(currentIdx);
-});
-
-// 4. Pet Interaction Logic
+// 4. Pet Interaction (Time-based Speech)
 const pet = document.getElementById('pet-sprite');
 const speech = document.getElementById('pet-speech');
 
-pet.addEventListener('mousedown', () => {
-    pet.style.transform = 'scale(0.8) translateY(20px)';
-});
-
+pet.addEventListener('mousedown', () => pet.style.transform = 'scale(0.8) translateY(20px)');
 pet.addEventListener('mouseup', () => {
     pet.style.transform = 'scale(1.1) translateY(-20px)';
+    const now = new Date();
+    const hour = now.getHours();
+    const day = now.getDay(); 
+    let greeting = "";
+    if (hour >= 5 && hour < 12) greeting = "Good morning!";
+    else if (hour >= 12 && hour < 18) greeting = "Good afternoon!";
+    else if (hour >= 18 && hour < 22) greeting = "Good evening!";
+    else greeting = "Working late?";
     
-    const currentMsgs = userThemes[currentIdx].msgs || ["Hello!"];
-    speech.innerText = currentMsgs[Math.floor(Math.random() * currentMsgs.length)];
+    if (day === 0 || day === 6) greeting += " Happy weekend!";
+    
+    const randomSuffixes = [" Hope you're well!", " Ready to work?", " Let's go!", " :)", " Stay hydrated!"];
+    const suffix = randomSuffixes[Math.floor(Math.random() * randomSuffixes.length)];
+    
+    speech.innerText = greeting + suffix;
     speech.style.visibility = 'visible';
-    
     setTimeout(() => {
         speech.style.visibility = 'hidden';
         pet.style.transform = 'scale(1)';
@@ -167,40 +232,30 @@ const poolInput = document.getElementById('pool-input');
 const poolDisplay = document.getElementById('pool-display');
 const resultDisplay = document.getElementById('decision-result');
 
-function updatePoolDisplay() {
-    poolDisplay.innerText = pool.length === 0 ? "Empty" : pool.join(", ");
-}
+function updatePool() { poolDisplay.innerText = pool.length ? pool.join(", ") : "No items in pool"; }
 
 document.getElementById('add-to-pool').addEventListener('click', () => {
-    const val = poolInput.value.trim();
-    if (val) {
-        pool.push(val);
+    if (poolInput.value.trim()) {
+        pool.push(poolInput.value.trim());
         poolInput.value = "";
-        updatePoolDisplay();
+        updatePool();
     }
-});
-
-poolInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') document.getElementById('add-to-pool').click();
 });
 
 document.getElementById('clear-pool').addEventListener('click', () => {
     pool = [];
     resultDisplay.innerText = "???";
-    updatePoolDisplay();
+    updatePool();
 });
 
 document.getElementById('choose-btn').addEventListener('click', () => {
-    if (pool.length === 0) {
-        resultDisplay.innerText = "ADD ITEMS!";
-        return;
-    }
+    if (!pool.length) return resultDisplay.innerText = "EMPTY!";
     resultDisplay.innerText = "ROLLING...";
     setTimeout(() => {
-        const choice = pool[Math.floor(Math.random() * pool.length)];
-        resultDisplay.innerText = choice.toUpperCase() + "!";
+        resultDisplay.innerText = pool[Math.floor(Math.random() * pool.length)].toUpperCase() + "!";
     }, 600);
 });
 
 // INITIALIZE
+renderThemeNav();
 applyTheme(currentIdx);
