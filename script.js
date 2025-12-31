@@ -36,6 +36,11 @@ const defaultThemes = [
         bg: "#f4f1d6", panel: "#dccf91", text: "#000000", grey: "#a69a68", accent: "#ef4036", 
         sprite: "https://play.pokemonshowdown.com/sprites/gen5ani/mimikyu.gif"
     },
+    {
+        name: "Lechonk",
+        bg: "#4a463b", panel: "#8a7b6a", text: "#ffffff", grey: "#e9c2a6", accent: "#ffcb05", 
+        sprite: "https://play.pokemonshowdown.com/sprites/ani/lechonk.gif"
+    },
     { 
         name: "Reshiram", 
         bg: "#f0f4f7", panel: "#ffffff", text: "#2c3e50", grey: "#bdc3c7", accent: "#3498db", 
@@ -260,6 +265,7 @@ document.getElementById('choose-btn').addEventListener('click', () => {
 renderThemeNav();
 
 applyTheme(currentIdx);
+
 
 
 
