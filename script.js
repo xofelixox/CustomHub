@@ -44,7 +44,7 @@ const defaultThemes = [
     { 
         name: "Asuka", 
         bg: "#3d0b0b", panel: "#e63946", text: "#ffffff", grey: "#f1faee", accent: "#ffb703", 
-        sprite: "https://wallpapers.com/images/hd/asuka-langley-smiling-evangelion-wwgz2g6wer42sp4h-2.jpg"
+        sprite: "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/1933b165-1ff0-4a4c-99c1-0b9a2becf6bf/decfj7g-ec1a380a-7b5a-4993-8313-dcecf2dc351f.gif?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiIvZi8xOTMzYjE2NS0xZmYwLTRhNGMtOTljMS0wYjlhMmJlY2Y2YmYvZGVjZmo3Zy1lYzFhMzgwYS03YjVhLTQ5OTMtODMxMy1kY2VjZjJkYzM1MWYuZ2lmIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.acI8J3BcONo5bprbN4hTo1zX4wpQsgnmpCB3T45zqhg"
     }
 ];
 
@@ -260,5 +260,6 @@ document.getElementById('choose-btn').addEventListener('click', () => {
 renderThemeNav();
 
 applyTheme(currentIdx);
+
 
 
