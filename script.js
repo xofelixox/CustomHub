@@ -134,8 +134,11 @@ document.getElementById('factory-reset').addEventListener('click', () => {
 function renderList() {
     const list = document.getElementById('theme-list');
     list.innerHTML = userThemes.map((t, i) => `
-        <div class="theme-item">
-            <span style="font-size:10px;">${t.name}</span>
+        <div class="theme-item" draggable="true" data-index="${i}">
+            <div style="display:flex; align-items:center; gap:10px;">
+                <span style="cursor:grab; color:var(--grey);">☰</span>
+                <span style="font-size:10px;">${t.name}</span>
+            </div>
             <div style="display:flex; gap:5px;">
                 <button class="mini-btn" style="padding:2px 5px; font-size:8px; background:var(--accent); color:var(--text);" onclick="startEdit(${i})">EDIT</button>
                 <button class="mini-btn" style="padding:2px 5px; font-size:8px; background:#ffd700; color:#000;" onclick="cloneTheme(${i})">CLONE</button>
@@ -143,6 +146,50 @@ function renderList() {
             </div>
         </div>
     `).join('');
+
+    // Add Drag & Drop Listeners
+    const items = list.querySelectorAll('.theme-item');
+    items.forEach(item => {
+        item.addEventListener('dragstart', handleDragStart);
+        item.addEventListener('dragover', handleDragOver);
+        item.addEventListener('drop', handleDrop);
+        item.addEventListener('dragend', handleDragEnd);
+    });
+}
+
+let dragSourceIndex = null;
+
+function handleDragStart(e) {
+    dragSourceIndex = this.getAttribute('data-index');
+    this.style.opacity = '0.4';
+    e.dataTransfer.effectAllowed = 'move';
+}
+
+function handleDragOver(e) {
+    e.preventDefault(); // Necessary to allow dropping
+    e.dataTransfer.dropEffect = 'move';
+    return false;
+}
+
+function handleDrop(e) {
+    e.stopPropagation();
+    const targetIndex = this.getAttribute('data-index');
+
+    if (dragSourceIndex !== targetIndex) {
+        // Rearrange the array
+        const movedItem = userThemes.splice(dragSourceIndex, 1)[0];
+        userThemes.splice(targetIndex, 0, movedItem);
+        
+        // Update current index so the active theme doesn't jump
+        // (Optional logic to track active theme index)
+        
+        saveAndRefresh();
+    }
+    return false;
+}
+
+function handleDragEnd(e) {
+    this.style.opacity = '1';
 }
 
 window.startEdit = (i) => {
@@ -263,10 +310,4 @@ document.getElementById('choose-btn').addEventListener('click', () => {
 
 // INITIALIZE
 renderThemeNav();
-
 applyTheme(currentIdx);
-
-
-
-
-

@@ -144,3 +144,21 @@ body {
     box-shadow: -4px 4px 0px var(--text);
     transform: translateX(-10px);
 }
+
+.theme-item {
+    cursor: default;
+    transition: background 0.2s;
+}
+
+.theme-item[draggable="true"] {
+    cursor: grab;
+}
+
+.theme-item:active {
+    cursor: grabbing;
+}
+
+/* Visual cue when dragging over */
+.theme-item:hover {
+    background: rgba(0,0,0,0.05);
+}
