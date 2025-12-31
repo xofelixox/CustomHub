@@ -125,7 +125,7 @@ document.getElementById('close-editor').addEventListener('click', () => {
 });
 
 document.getElementById('factory-reset').addEventListener('click', () => {
-    if(confirm("This will delete all custom themes and reset to the original 7. Proceed?")) {
+    if(confirm("This will delete all custom themes and reset to the original 8. Proceed?")) {
         localStorage.clear();
         location.reload();
     }
@@ -265,6 +265,7 @@ document.getElementById('choose-btn').addEventListener('click', () => {
 renderThemeNav();
 
 applyTheme(currentIdx);
+
 
 
 
