@@ -333,8 +333,8 @@ document.getElementById('choose-btn').addEventListener('click', () => {
  * --- AUTO CYCLE LOGIC ---
  */
 let cycleInterval = null;
-//const CYCLE_TIME = 5 * 60 * 1000; // 5 minutes in milliseconds
-const CYCLE_TIME = 5 * 1000;
+const CYCLE_TIME = 5 * 60 * 1000; // 5 minutes in milliseconds
+//const CYCLE_TIME = 5 * 1000;
 let cycleWasActiveBeforeManage = false;
 
 function toggleCycle() {
