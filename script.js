@@ -113,6 +113,14 @@ document.querySelectorAll('.editor-grid input').forEach(input => {
 });
 
 document.getElementById('manage-btn').addEventListener('click', () => {
+    // If cycling is currently running, stop it and remember that it was on
+    if (cycleInterval) {
+        cycleWasActiveBeforeManage = true;
+        clearInterval(cycleInterval);
+        cycleInterval = null;
+        document.getElementById('cycle-toggle').innerText = "CYCLE: PAUSED";
+    }
+
     overlay.classList.remove('hidden');
     editingIdx = null;
     resetEditorFields();
@@ -122,6 +130,12 @@ document.getElementById('manage-btn').addEventListener('click', () => {
 document.getElementById('close-editor').addEventListener('click', () => {
     overlay.classList.add('hidden');
     applyTheme(currentIdx); 
+
+    // If it was cycling before we opened the manager, turn it back on now
+    if (cycleWasActiveBeforeManage) {
+        cycleWasActiveBeforeManage = false; // Reset the flag
+        toggleCycle(); // This restarts the interval and updates the button text
+    }
 });
 
 document.getElementById('factory-reset').addEventListener('click', () => {
@@ -238,9 +252,16 @@ document.getElementById('save-theme').addEventListener('click', () => {
         userThemes.push(themeData);
         currentIdx = userThemes.length - 1;
     }
+    
     saveAndRefresh();
     overlay.classList.add('hidden');
     applyTheme(currentIdx);
+
+    // Resume cycle if it was active
+    if (cycleWasActiveBeforeManage) {
+        cycleWasActiveBeforeManage = false;
+        toggleCycle();
+    }
 });
 
 function saveAndRefresh() {
@@ -308,6 +329,57 @@ document.getElementById('choose-btn').addEventListener('click', () => {
     }, 600);
 });
 
+/**
+ * --- AUTO CYCLE LOGIC ---
+ */
+let cycleInterval = null;
+//const CYCLE_TIME = 5 * 60 * 1000; // 5 minutes in milliseconds
+const CYCLE_TIME = 5 * 1000;
+let cycleWasActiveBeforeManage = false;
+
+function toggleCycle() {
+    const btn = document.getElementById('cycle-toggle');
+    
+    if (cycleInterval) {
+        // Turn OFF
+        clearInterval(cycleInterval);
+        cycleInterval = null;
+        btn.innerText = "CYCLE: OFF";
+        btn.classList.remove('active');
+        localStorage.setItem('auto_cycle_enabled', 'false'); // Save state
+    } else {
+        // Turn ON
+        btn.innerText = "CYCLE: ON";
+        btn.classList.add('active');
+        startCycleTimer();
+        localStorage.setItem('auto_cycle_enabled', 'true'); // Save state
+    }
+}
+
+function startCycleTimer() {
+    if (cycleInterval) clearInterval(cycleInterval);
+    
+    cycleInterval = setInterval(() => {
+        // Calculate next index (loops back to 0 if at the end)
+        let nextIdx = (currentIdx + 1) % userThemes.length;
+        applyTheme(nextIdx);
+    }, CYCLE_TIME);
+}
+
+// Modify your existing applyTheme to reset the timer if user clicks manually
+const originalApplyTheme = applyTheme;
+applyTheme = function(idx) {
+    originalApplyTheme(idx);
+    // If cycling is active, restart the timer so the user gets a full 5 mins from now
+    if (cycleInterval) startCycleTimer();
+};
+
 // INITIALIZE
 renderThemeNav();
 applyTheme(currentIdx);
+
+// NEW: Check if cycle was on before restart
+const wasCycling = localStorage.getItem('auto_cycle_enabled') === 'true';
+if (wasCycling) {
+    toggleCycle(); // This will trigger the "Turn ON" logic automatically
+}
